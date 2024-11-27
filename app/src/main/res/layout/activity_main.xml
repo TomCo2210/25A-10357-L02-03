@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@color/blue_200"
+    android:background="@color/background_color"
     >
 
 
@@ -90,20 +90,18 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/main_IMG_heart2"
-            android:layout_height="@dimen/heart_dimens"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_height="@dimen/heart_dimens"
             android:layout_marginHorizontal="@dimen/heart_margins"
-            app:srcCompat="@drawable/heart"
-          />
+            android:layout_weight="1"
+            app:srcCompat="@drawable/heart" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/main_IMG_heart3"
-            android:layout_height="@dimen/heart_dimens"
             android:layout_width="0dp"
+            android:layout_height="@dimen/heart_dimens"
             android:layout_weight="1"
-            app:srcCompat="@drawable/heart"
-         />
+            app:srcCompat="@drawable/heart" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </RelativeLayout>

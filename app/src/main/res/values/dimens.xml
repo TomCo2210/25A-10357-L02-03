@@ -7,4 +7,5 @@
     <dimen name="heart_dimens">40dp</dimen>
     <dimen name="hearts_layout_width">140dp</dimen>
     <dimen name="heart_margins">10dp</dimen>
+    <dimen name="result_text_size">72sp</dimen>
 </resources>

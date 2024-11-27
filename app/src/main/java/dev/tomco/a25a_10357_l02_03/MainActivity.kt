@@ -1,6 +1,8 @@
 package dev.tomco.a25a_10357_l02_03
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.IntegerRes
@@ -10,29 +12,30 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
+import dev.tomco.a25a_10357_l02_03.logic.GameManager
+import dev.tomco.a25a_10357_l02_03.utilities.Constants
 
 class MainActivity : AppCompatActivity() {
 
-    val SCORE_DEFAULT: Int = 10
-    
     private lateinit var main_IMG_flag: AppCompatImageView
-    
+
     private lateinit var main_LBL_countryName: MaterialTextView
-    
+
     private lateinit var main_BTN_yes: MaterialButton
-    
+
     private lateinit var main_BTN_no: MaterialButton
-    
+
     private lateinit var main_LBL_score: MaterialTextView
-    
+
     private lateinit var main_IMG_hearts: Array<AppCompatImageView>
-    
-    private var score: Int = 0
-    
+
+    private lateinit var gameManager: GameManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViews()
+        gameManager = GameManager(main_IMG_hearts.size)
         initViews()
     }
 
@@ -50,22 +53,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        refreshUI()
-        main_BTN_yes.setOnClickListener { view:View -> increaseScore() }
-        main_BTN_no.setOnClickListener { view: View -> decreaseScore() }
-    }
-
-    private fun decreaseScore() {
-        score -= SCORE_DEFAULT
+        main_LBL_score.text = gameManager.score.toString()
+        main_BTN_yes.setOnClickListener { view: View -> answerClicked(true) }
+        main_BTN_no.setOnClickListener { view: View -> answerClicked(false) }
         refreshUI()
     }
 
-    private fun increaseScore() {
-        score += SCORE_DEFAULT
+    private fun answerClicked(expected: Boolean) {
+        gameManager.checkAnswer(expected = expected)
         refreshUI()
     }
 
     private fun refreshUI() {
-        main_LBL_score.text = "$score"
+        if (gameManager.isGameOver) { // Lost!
+            Log.d("Game Status", "Game Over! " + gameManager.score)
+            changeActivity("😭Game Over!", gameManager.score)
+        } else if (gameManager.isGameEnded) { // Won!
+            Log.d("Game Status", "You Won! " + gameManager.score)
+            changeActivity("🥳You Won!", gameManager.score)
+        } else { // Ongoing game:
+            main_LBL_score.text = gameManager.score.toString()
+            main_LBL_countryName.text = gameManager.currentCountry.name
+            main_IMG_flag.setImageResource(gameManager.currentCountry.flagImage)
+            if (gameManager.wrongAnswers != 0) {
+                main_IMG_hearts[main_IMG_hearts.size - gameManager.wrongAnswers].visibility =
+                    View.INVISIBLE
+            }
+        }
+    }
+
+    private fun changeActivity(message: String, score: Int) {
+        val intent = Intent(this, ScoreActivity::class.java)
+        var bundle = Bundle()
+        bundle.putInt(Constants.BundleKeys.SCORE_KEY, score)
+        bundle.putString(Constants.BundleKeys.STATUS_KEY, message)
+        intent.putExtras(bundle)
+        startActivity(intent)
+        finish()
     }
 }
